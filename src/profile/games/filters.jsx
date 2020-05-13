@@ -33,22 +33,6 @@ const isGameError = (game) => {
   return game.error;
 };
 
-const textFilter = (game, text = '') => {
-  if (game === 'value') return text;
-  if (game === 'type') return 'text';
-  if (text === '') return game;
-
-  if (game.players) {
-    for (const { playerName = '' } of game.players) {
-      if (playerName.indexOf(text) > -1) {
-        return true;
-      }
-    }
-  }
-
-  return game.error.indexOf(text) > -1;
-};
-
 const filterCharacter = (game, char) => {
   if (game === 'type') return char;
 
@@ -70,8 +54,6 @@ const Filters = (props) => {
     activeFilters,
     setFilterFunctions,
   } = props;
-
-  const [searchText, setText] = useState('');
   const [openChar, setOpenChar] = useState(true);
   const filters = activeFilters.map((f) => f('type'));
 
@@ -86,22 +68,14 @@ const Filters = (props) => {
     setFilterFunctions(newFilters);
   };
 
-  const definedCharacters = games.filter((g) => g.characters.length === 2);
-  const player1 = new Set(definedCharacters.map((g) => g.characters[0].character));
-  const player2 = new Set(definedCharacters.map((g) => g.characters[1].character));
-  const characters = new Set(player1, player2);
-
-  // apply text filter
-  if (games.length > 0) {
-    if (filters.includes('text')) {
-      const textFilterValue = activeFilters[filters.indexOf('text')]('value');
-      if (textFilterValue !== searchText) {
-        filterCheck('text', (game) => textFilter(game, searchText));
-      }
-    } else {
-      filterCheck('text', (game) => textFilter(game, searchText));
-    }
-  }
+  const uniqCharacters = new Set(
+    games
+      .map(
+        ({ characters } = { characters: [] }) => characters
+          .map(({ character }) => character),
+      )
+      .flat(),
+  );
 
   const characterGameCount = (character) => filteredGames
     .filter((g) => filterCharacter(g, character))
@@ -109,17 +83,6 @@ const Filters = (props) => {
 
   return (
     <Container>
-      <Row className="searchInput">
-        <Col>
-          <Input
-            type="text"
-            placeholder="Search Games"
-            value={searchText}
-            onChange={(e) => setText(e.target.value)}
-          />
-        </Col>
-      </Row>
-
       <Row className="checkList error">
         <Col>
           <InputGroup>
@@ -150,7 +113,7 @@ const Filters = (props) => {
           </h5>
           <Collapse isOpen={openChar}>
             <ListGroup>
-              {[...characters].map((character) => (
+              {[...uniqCharacters].map((character) => (
                 <ListGroupItem
                   key={character}
                 >

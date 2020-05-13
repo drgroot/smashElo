@@ -15,14 +15,41 @@ const Games = () => {
   const [filters, setFilters] = useState([]);
   const [selectedGames, setSelected] = useState([]);
 
-  if (allGames.length === 0) {
-    get('/game/ultimate/profile/games')
-      .then((res) => {
-        if (res.data) {
-          setGames(res.data);
+  const refreshGames = () => get('/game/ultimate/profile/games')
+    .then(({ data }) => {
+      let diff = (data.length !== allGames.length);
+
+      if (!diff) {
+        const hashes = allGames
+          .map(({
+            hash, error, players, characters,
+          }) => JSON.stringify({
+            hash, error, players, characters,
+          }));
+
+        for (const {
+          hash, error, players, characters,
+        } of data) {
+          if (!hashes.includes(JSON.stringify({
+            hash, error, players, characters,
+          }))) {
+            diff = true;
+            break;
+          }
         }
-      });
-  }
+      }
+
+      if (diff) {
+        if (selectedGames.length > 0) {
+          setSelected([]);
+        }
+
+        setGames(data);
+      }
+    });
+
+  refreshGames();
+
 
   // apply filters
   const games = (filters.length === 0) ? allGames : [];
@@ -54,7 +81,7 @@ const Games = () => {
         <Col md="9">
           {selectedGames.length > 0 && (
             <Row>
-              <Editor selectedGames={selectedGames} />
+              <Editor selectedGames={selectedGames} refreshGames={() => refreshGames()} />
             </Row>
           )}
           <Gallery

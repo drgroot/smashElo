@@ -18,35 +18,8 @@ const properties = [
   { state: 'place', attribute: 'place' },
 ];
 
-const save = (games, edits) => games.forEach((game) => {
-  const image = { ...game };
-
-  // setup defaults
-  if (!image.players || image.players.length !== 2) {
-    image.players = [[0, 1].map(() => ({ playerName: '', place: 1, character: '' }))];
-  }
-  if (!image.characters || image.characters.length !== 2) {
-    image.characters = [[0, 1].map(() => ({ place: 1, character: '' }))];
-  }
-
-  for (const [key, values] of Object.entries(edits)) {
-    const [{ attribute }] = properties.filter((p) => p.state === key);
-
-    for (const [i, value] of values.entries()) {
-      if (value && value !== '') {
-        image.players[i][attribute] = value;
-        image.characters[i][attribute] = value;
-      }
-    }
-  }
-
-  post('/game/ultimate/profile/saveGame', { image });
-});
-
-const deleteGames = (games) => games.forEach((game) => post('game/ultimate/profile/deleteGame', { game }));
-
 const Editor = (props) => {
-  const { selectedGames } = props;
+  const { selectedGames, refreshGames } = props;
   const [edits, setEdits] = useState({
     player: [null, null],
     character: [null, null],
@@ -60,6 +33,38 @@ const Editor = (props) => {
     newState[attribute][index] = value;
     setEdits(newState);
   };
+
+  const save = (games) => Promise.all(games.map((game) => {
+    const image = { ...game };
+
+    // setup defaults
+    if (!image.players || image.players.length !== 2) {
+      image.players = [[0, 1].map(() => ({ playerName: '', place: 1, character: '' }))];
+    }
+    if (!image.characters || image.characters.length !== 2) {
+      image.characters = [[0, 1].map(() => ({ place: 1, character: '' }))];
+    }
+
+    for (const [key, values] of Object.entries(edits)) {
+      const [{ attribute }] = properties.filter((p) => p.state === key);
+
+      for (const [i, value] of values.entries()) {
+        if (value && value !== '') {
+          image.players[i][attribute] = value;
+          image.characters[i][attribute] = value;
+        }
+      }
+    }
+
+    return post('/game/ultimate/profile/saveGame', { image });
+  }))
+    .then(() => refreshGames());
+
+  const deleteGames = (games) => Promise.all(
+    games
+      .map((image) => post('/game/ultimate/profile/delete', { image })),
+  )
+    .then(() => refreshGames());
 
   useEffect(
     () => {
@@ -165,7 +170,7 @@ const Editor = (props) => {
       <Row style={{ marginTop: '4px' }}>
         <Button
           color="primary"
-          onClick={() => save(selectedGames, edits)}
+          onClick={() => save(selectedGames)}
         >
           Save
         </Button>
