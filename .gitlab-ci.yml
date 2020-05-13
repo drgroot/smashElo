@@ -1,0 +1,69 @@
+stages:
+  - test
+  - deploy
+
+image: node
+before_script:
+  - npm install
+
+eslint:
+  stage: test
+  script:
+    - npx eslint src
+
+build:
+  stage: test
+  script:
+    - npm run-script build
+
+tests:
+  image: docker:stable
+  stage: test
+  services:
+    - docker:dind
+  except:
+    - master
+  variables:
+    MONGODB: mongodb://docker/
+    RABBITMQ: amqp://docker/
+  before_script:
+    - docker run -d -p "5672:5672" --name rabbitmq rabbitmq
+    - docker run -d -p "27017:27017" --name mongo mongo
+    - apk add --update nodejs npm alpine-sdk
+    - docker run -d --link=rabbitmq --link=mongo -e MONGODB=mongodb://mongo/ -e RABBITMQ=amqp://rabbitmq/ --name dbapi $REGISTRY/smashelo/dbapi
+    - npm install
+  script:
+    - npm test
+
+deploy_github:
+  image: docker:git
+  stage: deploy
+  variables:
+    GIT_STRATEGY: clone
+  only:
+    - master
+  before_script:
+    - git checkout $CI_COMMIT_REF_NAME
+    - git remote rm origin
+  script:
+    - git remote add origin https://drgroot:$GITHUB_TOKEN@github.com/drgroot/smashElo.git
+    - git push origin $CI_COMMIT_REF_NAME
+
+deploy_pages:
+  stage: deploy
+  only:
+    - master
+  script:
+    - apt-get update
+    - apt-get install -y git
+    - npm run-script build
+    - rm -rf .git
+    - cd build
+    - git init
+    - git add .
+    - git config --global user.name 'Autogen'
+    - git config --global user.email 'autogen@github.com'
+    - git commit -a -m "$CI_COMMIT_SHA"
+    - git checkout -b gh-pages
+    - git remote add origin https://drgroot:$GITHUB_TOKEN@github.com/drgroot/smashElo.git
+    - git push origin gh-pages --force

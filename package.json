@@ -1,20 +1,31 @@
 {
-  "name": "my-app",
+  "name": "smashelo",
+  "homepage": "https://smashelo.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.4.0",
-    "@testing-library/user-event": "^7.2.1",
+    "@fortawesome/fontawesome-svg-core": "1.2.27",
+    "@fortawesome/free-regular-svg-icons": "5.13.0",
+    "@fortawesome/free-solid-svg-icons": "5.12.1",
+    "@fortawesome/react-fontawesome": "0.1.8",
+    "axios": "0.19.2",
+    "bootstrap": "4.4.1",
+    "crossfilter2": "1.5.2",
+    "d3": "5.15.0",
+    "dc": "4.0.0",
+    "moment": "2.24.0",
+    "prop-types": "15.7.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.1"
+    "react-router-dom": "5.1.2",
+    "react-scripts": "3.4.1",
+    "reactstrap": "8.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test": "npx jest --forceExit"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -30,5 +41,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "nodejsmq": "0.1.5"
   }
 }

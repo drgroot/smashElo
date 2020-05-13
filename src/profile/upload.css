@@ -1,0 +1,30 @@
+#uploadImageContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-style: dashed;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 25px;
+  margin-top: 2%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#uploadImageContainer, 
+#uploadImageContainer svg{
+  border-color: #6d84b4;
+  cursor: pointer;
+  color: #6d84b4;
+}
+
+#uploadImageContainer:hover,
+#uploadImageContainer:hover svg,
+#uploadImageContainer svg:hover {
+  border-color: #37505c;
+  color: #37505c;
+}
+
+#imageUpload {
+  display: none;
+}
