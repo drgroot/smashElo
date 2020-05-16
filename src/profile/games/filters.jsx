@@ -24,11 +24,6 @@ import { names } from '../../lib/players';
 const isGameError = (game) => {
   if (game === 'type') return 'error';
 
-  if (game.players.length > 0) {
-    // eslint-disable-next-line no-restricted-globals
-    return !isFinite(game.players[0].skill);
-  }
-
   if (game.error === 'false') return false;
   return game.error;
 };
@@ -68,18 +63,19 @@ const Filters = (props) => {
     setFilterFunctions(newFilters);
   };
 
-  const uniqCharacters = new Set(
+  const characterGameCount = (character) => filteredGames
+    .filter((g) => filterCharacter(g, character))
+    .length;
+
+  const uniqCharacters = [...new Set(
     games
       .map(
         ({ characters } = { characters: [] }) => characters
           .map(({ character }) => character),
       )
       .flat(),
-  );
-
-  const characterGameCount = (character) => filteredGames
-    .filter((g) => filterCharacter(g, character))
-    .length;
+  )]
+    .filter((character) => characterGameCount(character) !== 0);
 
   return (
     <Container>
@@ -113,7 +109,7 @@ const Filters = (props) => {
           </h5>
           <Collapse isOpen={openChar}>
             <ListGroup>
-              {[...uniqCharacters].map((character) => (
+              {uniqCharacters.map((character) => (
                 <ListGroupItem
                   key={character}
                 >

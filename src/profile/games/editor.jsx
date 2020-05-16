@@ -84,7 +84,7 @@ const Editor = (props) => {
             [newState[state][i]] = defState;
             changeState = true;
           } else {
-            newState[state][i] = null;
+            newState[state][i] = '';
           }
         }
       }
@@ -130,6 +130,7 @@ const Editor = (props) => {
                     value={character[i] ? character[i] : ''}
                     onChange={(e) => setState(i, e.target.value, 'character')}
                   >
+                    <option key="emptyCharacter" value="">{' '}</option>
                     {Object.entries(names).map(([code, name]) => (
                       <option
                         key={`${code}${i}`}
@@ -153,6 +154,7 @@ const Editor = (props) => {
                   value={place[i] ? place[i] : ''}
                   onChange={(e) => setState(i, parseInt(e.target.value, 10), 'place')}
                 >
+                  <option key="emptyPlace" value="">{' '}</option>
                   {[1, 2].map((p) => (
                     <option
                       key={`${p}${i}`}

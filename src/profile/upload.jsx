@@ -14,13 +14,20 @@ const getFileBuffer = (file) => new Promise((resolve) => {
   };
 });
 
+const chunkArray = (arr, size) => {
+  const myArray = [];
+  for (let i = 0; i < arr.length; i += size) {
+    myArray.push(arr.slice(i, i + size));
+  }
+  return myArray;
+};
+
 class Upload extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       uploading: false,
-      files: [],
       added: 0,
       total: 0,
       progress: 0,
@@ -29,104 +36,44 @@ class Upload extends React.Component {
 
   uploadFiles(eventFiles) {
     const files = Array.from(eventFiles);
-    this.setState({ uploading: true, total: files.length }, async () => {
-      const jobs = [];
+    this.setState({
+      uploading: true, total: files.length, added: 0, progress: 0,
+    }, async () => Promise.all(
+      chunkArray(files, 5)
+        .map((chunk) => Promise.all(chunk
+          .filter(({ type }) => type === 'image/jpeg' || type === 'image/jpg')
+          .map(async (file) => {
+            const content = await getFileBuffer(file);
 
-      for (const file of files) {
-        if (file.type.indexOf('image') > -1) {
-          // eslint-disable-next-line no-await-in-loop
-          const src = await getFileBuffer(file);
-
-          let date = new Date(file.lastModified);
-          if (/^\d{16}-\w+\.\w+$/.test(file.name)) {
-            date = moment(file.name.split('-')[0], 'YYYYMMDDHHmmssSS').toDate();
-          }
-
-          jobs.push(
-            post(
-              '/game/ultimate/profile/uploadGames',
-              {
-                images: [{
-                  name: file.name,
-                  type: file.type,
-                  date,
-                  content: src,
-                  src,
-                  error: 'Image rejected. Please enter data in manually',
-                  data: [],
-                  status: 'error',
-                }],
-              },
-            )
-              .then((res) => {
-                let { added, progress } = this.state;
-                progress += 1;
-
-                if (typeof res.data[0] === 'string') {
-                  added += 1;
-                }
-
-                this.setState({
-                  added,
-                  progress,
-                });
-
-                return res.data;
-              }),
-          );
-        }
-      }
-
-      Promise.all(jobs)
-        .then((results) => {
-          const newImages = [];
-          results.flatMap((result) => {
-            if (typeof result !== 'string' && result[0].content) {
-              newImages.push({ ...result[0], src: result[0].content });
+            let date = new Date(file.lastModified);
+            if (/^\d{16}-\w+\.\w+$/.test(file.name)) {
+              date = moment(file.name.split('-')[0], 'YYYYMMDDHHmmssSS').toDate();
             }
-          });
 
-          this.setState({
-            uploading: false,
-            files: newImages,
-          });
-        });
-    });
-  }
+            return {
+              name: file.name,
+              type: file.type,
+              date,
+              content,
+              src: content,
+              error: 'Image rejected. Please enter data in manually',
+              data: [],
+              status: 'error',
+            };
+          }))
+          .then((images) => post('/game/ultimate/profile/uploadGames', { images })
+            .then(({ data }) => {
+              let { added, progress } = this.state;
 
-  actionHandler(e, action, item) {
-    e.stopPropagation();
-    const { files } = this.state;
-    const [stateItem] = files.filter((f) => f.name === item.name);
-    const index = files.indexOf(stateItem);
-    files.splice(index, 1);
+              progress += images.length;
+              added += data
+                .filter((e) => typeof e === 'string')
+                .length;
 
-    if (action === 'save') {
-      post('/game/ultimate/profile/saveGame', {
-        image: {
-          name: item.name,
-          date: item.date,
-          content: item.content,
-          data: item.data,
-        },
-      })
-        .then((res) => {
-          if (res.data !== 'added') {
-            files.push({
-              ...item,
-              error: res.data.error,
-            });
-          }
-
-          this.setState({
-            files,
-          });
-        });
-    } else if (action === 'delete') {
-      this.setState({
-        files,
-      });
-    }
+              this.setState({ added, progress });
+            }))),
+    )
+      .then(() => this.setState({ uploading: false })));
   }
 
   render() {

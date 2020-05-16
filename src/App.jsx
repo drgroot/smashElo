@@ -21,6 +21,7 @@ import Account from './login/account';
 import Games from './profile/games/index';
 import Upload from './profile/upload';
 import CharacterView from './characterDashboard/index';
+import { get } from './lib/request';
 
 // import logo from './logo.svg';
 import './App.css';
@@ -40,18 +41,15 @@ function NoMatch() {
 const App = () => {
   const [cookie, setCookie] = useState(false);
 
-  // get cookie
-  if (!document.cookie) {
-    const params = new URLSearchParams(window.location.search);
-    const urlCookie = params.get('valid');
-
-    if (urlCookie && cookie !== urlCookie) {
-      document.cookie = urlCookie;
-      setCookie(urlCookie);
-    }
-  } else if (cookie !== document.cookie) {
-    setCookie(document.cookie);
-  }
+  // check if we are authenticated
+  get('/')
+    .then(({ status }) => {
+      if (status === 200 && (!cookie)) {
+        setCookie(true);
+      } else if (status !== 200 && cookie) {
+        setCookie(false);
+      }
+    });
 
   return (
     <Router basename="/">
