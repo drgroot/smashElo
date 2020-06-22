@@ -51,9 +51,9 @@ deploy_github:
 
 deploy_pages:
   stage: deploy
-  only:
-    - master
   script:
+    - export BRANCH="$CI_COMMIT_REF_NAME"
+    - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then export BRANCH="gh-pages"  || true; fi
     - apt-get update
     - apt-get install -y git
     - npm run-script build
@@ -64,6 +64,7 @@ deploy_pages:
     - git config --global user.name 'Autogen'
     - git config --global user.email 'autogen@github.com'
     - git commit -a -m "$CI_COMMIT_SHA"
-    - git checkout -b gh-pages
+    - git checkout -b $BRANCH
+    - if [ -z "$GITHUB_TOKEN" ]; then exit 0; fi
     - git remote add origin https://drgroot:$GITHUB_TOKEN@github.com/drgroot/smashElo.git
-    - git push origin gh-pages --force
+    - git push origin $BRANCH --force
