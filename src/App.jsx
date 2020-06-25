@@ -42,7 +42,7 @@ const App = () => {
   const [cookie, setCookie] = useState(false);
 
   // check if we are authenticated
-  get('/')
+  get('/api/')
     .then(({ status }) => {
       if (status === 200 && (!cookie)) {
         setCookie(true);

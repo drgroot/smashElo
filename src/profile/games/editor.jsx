@@ -56,13 +56,13 @@ const Editor = (props) => {
       }
     }
 
-    return post('/game/ultimate/profile/saveGame', { image });
+    return post('/api/ultimate/profile/saveGame', { image });
   }))
     .then(() => refreshGames());
 
   const deleteGames = (games) => Promise.all(
     games
-      .map((image) => post('/game/ultimate/profile/delete', { image })),
+      .map((image) => post('/api/ultimate/profile/delete', { image })),
   )
     .then(() => refreshGames());
 

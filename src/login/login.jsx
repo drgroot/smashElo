@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Container, Row, Col, Button,
 } from 'reactstrap';
-import { API_URL } from '../lib/request';
+import { weburl } from '../lib/request';
 
 const login = () => (
   <Container>
@@ -17,7 +17,7 @@ const login = () => (
             style={{
               backgroundColor: '#f1f2fa',
             }}
-            onClick={() => { window.location.href = `${API_URL}/login/auth/twitch`; }}
+            onClick={() => { window.location.href = `${weburl}/api/login/twitch`; }}
           >
             <img height="25px" alt="" src={`${process.env.PUBLIC_URL}/img/oauth/twitch.png`} />
             <span style={{ color: '#60657b' }}>Connect with Twitch</span>

@@ -30,8 +30,8 @@ tests:
     - docker run -d -p "5672:5672" --name rabbitmq rabbitmq
     - docker run -d -p "27017:27017" --name mongo mongo
     - apk add --update nodejs npm alpine-sdk
-    - docker run -d --link=rabbitmq --link=mongo -e MONGODB=mongodb://mongo/ -e RABBITMQ=amqp://rabbitmq/ --name dbapi $REGISTRY/smashelo/dbapi
     - npm install
+    - docker run -d --link=rabbitmq --link=mongo -e MONGODB=mongodb://mongo/ -e RABBITMQ=amqp://rabbitmq/ --name dbapi $REGISTRY/smashelo/dbapi
   script:
     - npm test
 
@@ -51,9 +51,10 @@ deploy_github:
 
 deploy_pages:
   stage: deploy
+  variables:
+    NODE_ENV: production
+    BRANCH: gh-pages
   script:
-    - export BRANCH="$CI_COMMIT_REF_NAME"
-    - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then export BRANCH="gh-pages"  || true; fi
     - apt-get update
     - apt-get install -y git
     - npm run-script build
@@ -68,3 +69,16 @@ deploy_pages:
     - if [ -z "$GITHUB_TOKEN" ]; then exit 0; fi
     - git remote add origin https://drgroot:$GITHUB_TOKEN@github.com/drgroot/smashElo.git
     - git push origin $BRANCH --force
+
+deploy_image:
+  stage: deploy
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:dind
+  before_script:
+    - if [ ! -z $DOCKER_PASSWORD ]; then docker login --username drgroot -p $DOCKER_PASSWORD https://mordor.yusufali.ca; fi
+  script:
+    - docker build --network host -t mordor.yusufali.ca/$CI_PROJECT_PATH .
+    - if [ ! -z $DOCKER_PASSWORD ]; then docker push mordor.yusufali.ca/$CI_PROJECT_PATH; fi

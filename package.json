@@ -22,7 +22,7 @@
     "reactstrap": "8.4.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "npm install && react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "test": "npx jest --forceExit"

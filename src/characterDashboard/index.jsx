@@ -16,7 +16,7 @@ import heatChart from './heatChart';
 
 const compareFn = (props, state) => props.character !== state.character;
 
-const addDataFn = (props, state, crossfilter, skip = 0) => get('/game/ultimate/getGames/character', { name: props.character, skip, id: props.character })
+const addDataFn = (props, state, crossfilter, skip = 0) => get('/api/ultimate/game/get/character', { name: props.character, skip, id: props.character })
   .then((res) => {
     if (res.data.id !== props.character) return;
 

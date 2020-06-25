@@ -15,7 +15,7 @@ const Games = () => {
   const [filters, setFilters] = useState([]);
   const [selectedGames, setSelected] = useState([]);
 
-  const refreshGames = () => get('/game/ultimate/profile/games')
+  const refreshGames = () => get('/api/ultimate/profile/games')
     .then(({ data }) => {
       let diff = (data.length !== allGames.length);
 

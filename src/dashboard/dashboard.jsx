@@ -12,7 +12,7 @@ import { get } from '../lib/request';
 function Dashboard() {
   const [characters, setCharacters] = useState([]);
 
-  get('/game/ultimate/characters', {})
+  get('/api/ultimate/game/characters', {})
     .then(({ data }) => {
       if (data.length === characters.length) {
         let diff = false;

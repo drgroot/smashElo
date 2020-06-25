@@ -61,7 +61,7 @@ class Upload extends React.Component {
               status: 'error',
             };
           }))
-          .then((images) => post('/game/ultimate/profile/uploadGames', { images })
+          .then((images) => post('/api/ultimate/profile/uploadGames', { images })
             .then(({ data }) => {
               let { added, progress } = this.state;
 
