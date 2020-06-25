@@ -1,6 +1,7 @@
 stages:
   - test
   - deploy
+  - trigger
 
 image: node
 before_script:
@@ -82,3 +83,12 @@ deploy_image:
   script:
     - docker build --network host -t mordor.yusufali.ca/$CI_PROJECT_PATH .
     - if [ ! -z $DOCKER_PASSWORD ]; then docker push mordor.yusufali.ca/$CI_PROJECT_PATH; fi
+
+trigger_build:
+  image: curlimages/curl
+  stage: trigger
+  before_script:
+    - echo "Triggering deployment"
+  script:
+    - if [ -z $DEPLOYMENT_TRIGGER ]; then exit 0; fi
+    - curl -X POST -F token=$DEPLOYMENT_TRIGGER -F ref=master https://mordor.yusufali.ca/gitlab/api/v4/projects/67/trigger/pipeline
