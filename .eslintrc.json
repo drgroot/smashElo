@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "airbnb-base"
+  ],
+  "env": {
+    "es6": true,
+    "browser": true,
+    "mocha": true
+  },
+  "ignorePatterns": [
+    "old/**/*.jsx",
+    "src/index.js"
+  ],
+  "parser": "babel-eslint",
+  "rules": {
+    "no-restricted-syntax": [
+      2,
+      "BinaryExpression[operator='in']"
+    ]
+  }
+}

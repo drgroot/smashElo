@@ -1,13 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import './base.css';
+import './template/template';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const content = document.getElementById('images');
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// add in character images
+import(
+  /* webpackPreload: true */
+  /* webpackPrefetch: true */
+  /* webpackChunkName: "request" */
+  './lib/request'
+)
+  .then(({ get }) => get('/api/ultimate/game/characters')
+    .then((data) => data.forEach(
+      (character) => import(`./img/assets/thumb_v/${character}.png`)
+        .then(({ default: src }) => {
+          const container = document.createElement('a');
+          container.href = `/character.html?${character}`;
+
+          const image = document.createElement('img');
+          image.classList.add('w-10', 'lg:w-16', 'lg:rounded-md');
+          image.setAttribute('src', src);
+          image.loading = 'lazy';
+
+          container.appendChild(image);
+          content.appendChild(container);
+        }))))
+  .then(() => {
+    document.getElementById('pagetitle').innerText = 'Choose A Fighter';
+  });

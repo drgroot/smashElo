@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Character Stats -</title>
+</head>
+
+<body class='bg-gray-300'>
+  {{> template/head.html }}
+
+  <div id='content' class='mt-4 flex justify-center flex-col'>
+
+    <div class='flex flex-wrap flex-col lg:flex-row lg:space-x-1'>
+      <div class='text-center bg-white-500 p-3 shadow-2xl rounded-md mb-4 w-full flex-grow lg:w-5/12'>
+        <div>Frequent Opponents</div>
+        <div id='opponentchart'></div>
+        <div>Win %</div>
+      </div>
+      <div class='text-center bg-white-500 p-3 shadow-2xl rounded-md mb-4 w-full flex-grow lg:w-5/12'>
+        <div>Frequent Players</div>
+        <div id='playerchart'></div>
+        <div>Win %</div>
+      </div>
+    </div>
+
+    <div class='text-center w-full bg-white-500 p-3 shadow-2xl rounded-md mb-4 ml-auto mr-auto lg:w-5/6 lg:h-auto'>
+      <div>Heat Map</div>
+      <div id='heatmap'></div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -3,52 +3,43 @@
   "homepage": "https://smashelo.com",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "1.2.27",
-    "@fortawesome/free-regular-svg-icons": "5.13.0",
-    "@fortawesome/free-solid-svg-icons": "5.12.1",
-    "@fortawesome/react-fontawesome": "0.1.8",
-    "axios": "0.19.2",
-    "bootstrap": "4.4.1",
-    "crossfilter2": "1.5.2",
-    "d3": "5.15.0",
-    "dc": "4.0.0",
-    "moment": "2.24.0",
-    "prop-types": "15.7.2",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "react-router-dom": "5.1.2",
-    "react-scripts": "3.4.1",
-    "reactstrap": "8.4.1"
-  },
   "scripts": {
-    "start": "npm install && react-scripts start",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject",
-    "test": "npx jest --forceExit"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "build": "NODE_ENV=production npx webpack",
+    "test": "npx mocha --require @babel/register --exit",
+    "start": "npx webpack-dev-server --config webpack.dev.config.js --watch"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^1.7.0",
-    "nodejsmq": "0.1.5"
+    "@babel/cli": "7.8.4",
+    "@babel/core": "7.9.0",
+    "@babel/node": "7.8.7",
+    "@babel/preset-env": "7.9.5",
+    "@babel/register": "7.9.0",
+    "autoprefixer": "9.8.4",
+    "babel-loader": "8.1.0",
+    "css-loader": "3.6.0",
+    "cssnano": "4.1.10",
+    "eslint": "7.4.0",
+    "eslint-config-airbnb-base": "14.2.0",
+    "eslint-plugin-import": "2.22.0",
+    "file-loader": "6.0.0",
+    "html-loader": "1.1.0",
+    "html-webpack-plugin": "4.3.0",
+    "image-webpack-loader": "6.0.0",
+    "mini-css-extract-plugin": "0.9.0",
+    "mocha": "8.0.1",
+    "nodejsmq": "0.1.5",
+    "postcss-loader": "3.0.0",
+    "style-loader": "1.2.1",
+    "tailwindcss": "1.4.6",
+    "webpack": "4.43.0",
+    "webpack-cli": "3.3.12",
+    "webpack-dev-server": "3.11.0"
+  },
+  "dependencies": {
+    "babel-eslint": "10.1.0",
+    "chai": "4.2.0",
+    "crossfilter2": "1.5.2",
+    "d3": "5.16.0",
+    "dc": "4.0.5"
   }
 }

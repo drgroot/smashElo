@@ -50,27 +50,6 @@ deploy_github:
     - git remote add origin https://drgroot:$GITHUB_TOKEN@github.com/drgroot/smashElo.git
     - git push origin $CI_COMMIT_REF_NAME
 
-deploy_pages:
-  stage: deploy
-  variables:
-    NODE_ENV: production
-    BRANCH: gh-pages
-  script:
-    - apt-get update
-    - apt-get install -y git
-    - npm run-script build
-    - rm -rf .git
-    - cd build
-    - git init
-    - git add .
-    - git config --global user.name 'Autogen'
-    - git config --global user.email 'autogen@github.com'
-    - git commit -a -m "$CI_COMMIT_SHA"
-    - git checkout -b $BRANCH
-    - if [ -z "$GITHUB_TOKEN" ]; then exit 0; fi
-    - git remote add origin https://drgroot:$GITHUB_TOKEN@github.com/drgroot/smashElo.git
-    - git push origin $BRANCH --force
-
 deploy_image:
   stage: deploy
   image: docker:stable

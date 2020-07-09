@@ -8,4 +8,4 @@ COPY . /
 
 ENV NODE_ENV production
 USER node
-CMD ["npm","start","--unhandled-rejections=strict"]
+CMD ["npm","start"]

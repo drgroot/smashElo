@@ -1,16 +1,34 @@
-import axios from 'axios';
+const responseParser = (response) => response.json();
 
-const apiurl = (process.env.REACT_APP_API_URL) ? process.env.REACT_APP_API_URL : 'http://localhost:3000';
-export const weburl = apiurl.replace(/\/$/, '');
+export const get = (path, params = false) => {
+  const url = new URL(window.location.origin + path);
+  if (params) {
+    url.search = new URLSearchParams(params).toString();
+  }
 
-const defaultOptions = {
-  withCredentials: true,
-  credentials: 'same-origin',
+  return fetch(
+    url,
+    {
+      method: 'GET',
+      mode: 'same-origin',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      redirect: 'follow',
+    },
+  )
+    .then(responseParser);
 };
 
-export const post = (path, data) => axios.post(`${weburl}${path}`, data, { ...defaultOptions });
-
-export const get = (path, params) => axios.get(`${weburl}${path}`, {
-  ...defaultOptions,
-  params,
-});
+export const post = (path, data = {}) => fetch(path, {
+  method: 'POST',
+  mode: 'same-origin',
+  credentials: 'same-origin',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  redirect: 'follow',
+  body: JSON.stringify(data),
+})
+  .then(responseParser);
