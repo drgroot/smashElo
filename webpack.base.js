@@ -145,9 +145,10 @@ module.exports = (environment) => ({
               gifsicle: {
                 interlaced: false,
               },
-              webp: {
-                quality: 75,
-              },
+              // webp: {
+              // quality: 75,
+              //  enabled: false,
+              // },
             },
           },
         ],
