@@ -224,7 +224,7 @@ const skillChart = (dc, d3, dateDim, playerSkill, characterSkill, invertColor, c
       dc.lineChart(chart)
         .group(playerSkill, 'Player Skill')
         .valueAccessor((p) => p.value.average)
-        .colors(invertColor(color)),
+        .colors(invertColor(color, false)),
       dc.lineChart(chart)
         .colors(color)
         .valueAccessor((p) => p.value.average)
