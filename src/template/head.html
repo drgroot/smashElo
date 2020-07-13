@@ -25,8 +25,8 @@
       <label class='cursor-pointer' for='enablenamespacing'>Only Me</label>
     </div>
 
-    <a href='#login'
-      class='p-3 w-full hover:shadow-2xl text-black-500 hover:text-white-500 hover:bg-gradient-red-600-red-400 rounded-sm lg:mb-3 nologin'>
+    <a href='#login' id='loginbutton'
+      class='hidden p-3 w-full hover:shadow-2xl text-black-500 hover:text-white-500 hover:bg-gradient-red-600-red-400 rounded-sm lg:mb-3 nologin'>
       <svg class='ml-auto mr-auto inline fill-current w-6' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           d="M12 2c2.757 0 5 2.243 5 5.001 0 2.756-2.243 5-5 5s-5-2.244-5-5c0-2.758 2.243-5.001 5-5.001zm0-2c-3.866 0-7 3.134-7 7.001 0 3.865 3.134 7 7 7s7-3.135 7-7c0-3.867-3.134-7.001-7-7.001zm6.369 13.353c-.497.498-1.057.931-1.658 1.302 2.872 1.874 4.378 5.083 4.972 7.346h-19.387c.572-2.29 2.058-5.503 4.973-7.358-.603-.374-1.162-.811-1.658-1.312-4.258 3.072-5.611 8.506-5.611 10.669h24c0-2.142-1.44-7.557-5.631-10.647z" />
@@ -34,8 +34,18 @@
       <span class='ml-1'>Login</span>
     </a>
 
-    <a href='#profilegames'
-      class='p-3 w-full hover:shadow-2xl text-black-500 hover:text-white-500 hover:bg-gradient-red-600-red-400 rounded-sm lg:mb-3 login'>
+    <a href='/api/login/twitch'
+      class='hidden p-3 w-full hover:shadow-2xl text-white-500 hover:text-white-500 bg-purple-500 hover:bg-gradient-purple-600-purple-500 rounded-sm lg:mb-3 oauthlogin'>
+      <svg class='ml-auto mr-auto inline fill-current w-6' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M2.149 0l-1.612 4.119v16.836h5.731v3.045h3.224l3.045-3.045h4.657l6.269-6.269v-14.686h-21.314zm19.164 13.612l-3.582 3.582h-5.731l-3.045 3.045v-3.045h-4.836v-15.045h17.194v11.463zm-3.582-7.343v6.262h-2.149v-6.262h2.149zm-5.731 0v6.262h-2.149v-6.262h2.149z"
+          fill-rule="evenodd" clip-rule="evenodd" />
+      </svg>
+      <span class='ml-1'>Connect with Twitch</span>
+    </a>
+
+    <a href='/profile/mygames.html'
+      class='hidden p-3 w-full hover:shadow-2xl text-black-500 hover:text-white-500 hover:bg-gradient-red-600-red-400 rounded-sm lg:mb-3 login'>
       <svg class='ml-auto mr-auto inline fill-current w-6' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           d="M17.622 3c-1.913 0-2.558 1.382-5.623 1.382-3.009 0-3.746-1.382-5.623-1.382-5.209 0-6.376 10.375-6.376 14.348 0 2.145.817 3.652 2.469 3.652 3.458 0 2.926-5 6.915-5h5.23c3.989 0 3.457 5 6.915 5 1.652 0 2.471-1.506 2.471-3.651 0-3.973-1.169-14.349-6.378-14.349zm-10.622 10c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zm10-6c.552 0 1 .447 1 1 0 .553-.448 1-1 1s-1-.447-1-1c0-.553.448-1 1-1zm-2 4c-.552 0-1-.447-1-1 0-.553.448-1 1-1s1 .447 1 1c0 .553-.448 1-1 1zm2 2c-.552 0-1-.447-1-1 0-.553.448-1 1-1s1 .447 1 1c0 .553-.448 1-1 1zm2-2c-.552 0-1-.447-1-1 0-.553.448-1 1-1s1 .447 1 1c0 .553-.448 1-1 1zm-10.25-1c0 .965-.785 1.75-1.75 1.75s-1.75-.785-1.75-1.75.785-1.75 1.75-1.75 1.75.785 1.75 1.75z" />
@@ -43,8 +53,8 @@
       <span class='ml-1'>My Games</span>
     </a>
 
-    <a href='#profileupload'
-      class='p-3 w-full hover:shadow-2xl text-black-500 hover:text-white-500 hover:bg-gradient-red-600-red-400 rounded-sm lg:mb-3 login'>
+    <a href='/profile/upload.html'
+      class='hidden p-3 w-full hover:shadow-2xl text-black-500 hover:text-white-500 hover:bg-gradient-red-600-red-400 rounded-sm lg:mb-3 login'>
       <svg class='ml-auto mr-auto inline fill-current w-6' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           d="M0 12c0 6.627 5.373 12 12 12s12-5.373 12-12-5.373-12-12-12-12 5.373-12 12zm18-1h-4v7h-4v-7h-4l6-6 6 6z" />

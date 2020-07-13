@@ -48,6 +48,7 @@ module.exports = (environment) => ({
   entry: entries,
   output: {
     filename: '[name].[contenthash].js',
+    publicPath: '/',
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [

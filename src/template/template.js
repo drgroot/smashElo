@@ -40,13 +40,32 @@ for (const page of pages) {
   }
 }
 
+document.getElementById('loginbutton').addEventListener('click', () => {
+  for (const node of pages) {
+    const href = node.href.replace(window.location.origin, '');
+    if (node.classList.contains('oauthlogin') || href === '/') {
+      node.classList.remove('hidden');
+    } else {
+      node.classList.add('hidden');
+    }
+  }
+});
+
 import(
   /* webpackPreload: true */
   /* webpackPrefetch: true */
   /* webpackChunkName: "request" */
   '../lib/request'
 ).then(({ get }) => get('/api/')
-  .then(() => Array.from(navcontainer.querySelectorAll('.nologin'))
-    .forEach((node) => node.classList.add('hidden')))
-  .catch(() => Array.from(navcontainer.querySelectorAll('.login'))
-    .forEach((node) => node.classList.add('hidden'))));
+  .then(() => {
+    Array.from(navcontainer.querySelectorAll('.login'))
+      .forEach((node) => node.classList.remove('hidden'));
+    Array.from(navcontainer.querySelectorAll('.nologin'))
+      .forEach((node) => node.classList.add('hidden'));
+  })
+  .catch(() => {
+    Array.from(navcontainer.querySelectorAll('.login'))
+      .forEach((node) => node.classList.add('hidden'));
+    Array.from(navcontainer.querySelectorAll('.nologin'))
+      .forEach((node) => node.classList.remove('hidden'));
+  }));

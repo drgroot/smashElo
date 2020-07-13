@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Games</title>
+</head>
+
+<body class='bg-gray-300'>
+  {{> template/head.html }}
+  <div id='content' class='mt-4'>
+    <div class='flex w-full flex-row'>
+      <div style='width:250px' class='p-3 flex flex-col flex-shrink-0'>
+        <div>
+          <input class='cursor-pointer' type='checkbox' id='errorFilter'>
+          <label class='cursor-pointer' for='errorFilter'>Error (<span></span>)</label>
+        </div>
+      </div>
+      <div class='flex flex-col justify-start p-3 flex-grow'>
+        <div id='editor' class='hidden mb-3'>
+          <div id='matchError'></div>
+          <div class='flex'>
+            <div class='flex flex-col'>
+              <div>
+                <label>P1:</label>
+                <input id='p1name' type='text' />
+              </div>
+              <div>
+                <label>Character:</label>
+                <select id='p1char' value="">
+                  <option value=""></option>
+                </select>
+              </div>
+              <div>
+                <label>Place:</label>
+                <select id='p1place' value="">
+                  <option value=""></option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                </select>
+              </div>
+            </div>
+            <div class='flex flex-col'>
+              <div>
+                <label>P2:</label>
+                <input id='p2name' type='text' />
+              </div>
+              <div>
+                <label>Character:</label>
+                <select id='p2char' value="">
+                  <option value=""></option>
+                </select>
+              </div>
+              <div>
+                <label>Place:</label>
+                <select id='p2place' value="">
+                  <option value=""></option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class='flex text-center'>
+            <div id='save'
+              class='cursor-pointer mr-4 w-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>Save
+            </div>
+            <div id='delete'
+              class='cursor-pointer w-20 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>Delete
+            </div>
+          </div>
+        </div>
+        <div id='gallery' class='space-between flex flex-wrap'></div>
+      </div>
+    </div>
+  </div>
+
+  <div class='ml-1 hidden border-4 border-red-500 fill-current absolute text-white-500 z-10'></div>
+</body>
+
+</html>
