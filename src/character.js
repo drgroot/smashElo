@@ -74,7 +74,8 @@ const playerChart = (dc, d3, group, dim, invertColor) => {
   });
 
   const elem = document.getElementById('playerchart');
-  const chart = new dc.RowChart(elem)
+  const chart = new dc.RowChart(elem);
+  chart
     .dimension(dim)
     .group(top6())
     .valueAccessor((p) => Math.round(p.value.percent * 100 * 100) / 100)
@@ -125,7 +126,8 @@ const opponentChart = (dc, group, dim, invertColor, names, colors) => {
   });
 
   const elem = document.getElementById('opponentchart');
-  const chart = new dc.RowChart(elem)
+  const chart = new dc.RowChart(elem);
+  chart
     .dimension(dim)
     .group(top6())
     .keyAccessor((p) => p.key)
@@ -175,7 +177,9 @@ const opponentChart = (dc, group, dim, invertColor, names, colors) => {
 
 const heatChart = (dc, d3, group, dim) => {
   const elem = document.getElementById('heatmap');
-  const chart = new dc.ScatterPlot(elem)
+  const chart = new dc.ScatterPlot(elem);
+
+  chart
     .dimension(dim)
     .group(group)
     .valueAccessor((p) => Math.round(p.value.percent * 100 * 100) / 100)
@@ -202,8 +206,8 @@ const skillChart = (dc, d3, dateDim, playerSkill, characterSkill, invertColor, c
   const chart = new dc.CompositeChart(elem);
 
   const values = playerSkill.top(Infinity);
-  const [{ value: { average: max } } = { value: { average: 1350 } }] = values;
-  const { value: { average: min } } = values[values.length - 1] || { value: { average: 1100 } };
+  const [{ value: { average: max } } = { value: { average: 1200 } }] = values;
+  const { value: { average: min } } = values[values.length - 1] || { value: { average: 1200 } };
   const color = colors[character];
   const offset = 2;
 
@@ -276,11 +280,26 @@ if (character) {
                 return crossfilter;
               });
 
-            for (const chart of charts) {
-              chart.render();
-            }
-
             return getMatches(character);
+          })
+          .then(() => {
+            if (charts.length > 1) {
+              const [[dc, d3]] = charts;
+
+              // redraw skillchart
+              const skillchart = charts[charts.length - 1];
+              const values = playerSkill.top(Infinity);
+              const [{ value: { average: max } } = { value: { average: 1200 } }] = values;
+              const { value: { average: min } } = values[values.length - 1]
+                || { value: { average: 1200 } };
+              const offset = 2;
+              skillchart.y(d3.scaleLinear().domain([
+                min * (1 - offset / 100),
+                max * (1 + offset / 100),
+              ]));
+
+              dc.redrawAll();
+            }
           }),
         Promise.all([
           import(
@@ -309,6 +328,7 @@ if (character) {
           ),
         ])
           .then(([dc, d3, { default: invertColor }, { names, colors }]) => charts.push(
+            [dc, d3],
             playerChart(dc, d3, winPlayer, playerDim, invertColor),
             opponentChart(dc, winCharacter, characterDim, invertColor, names, colors),
             heatChart(dc, d3, winSkill, skillDiffDim),
