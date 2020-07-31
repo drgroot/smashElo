@@ -1,5 +1,4 @@
 import './base.css';
-import './character.css';
 import './template/template';
 
 const charts = [];
@@ -226,6 +225,7 @@ const skillChart = (dc, d3, dateDim, playerSkill, characterSkill, invertColor, c
     .legend(dc.legend().x(10).y(255))
     .compose([
       dc.lineChart(chart)
+        .dashStyle([4, 1])
         .group(playerSkill, 'Player Skill')
         .valueAccessor((p) => p.value.average)
         .colors(invertColor(color, false)),
@@ -233,7 +233,12 @@ const skillChart = (dc, d3, dateDim, playerSkill, characterSkill, invertColor, c
         .colors(color)
         .valueAccessor((p) => p.value.average)
         .group(characterSkill, 'Character Skill'),
-    ]);
+    ])
+    .on('renderlet', () => {
+      chart.selectAll('.line')
+        .attr('stroke-width', 0.5)
+        .style('fill', 'none');
+    });
 
   chart.render();
   return chart;
