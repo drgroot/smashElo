@@ -50,6 +50,7 @@ const updatedEditor = () => {
 // or a match has been updated/edited.
 const renderMatches = (matches) => {
   const gallery = document.getElementById('gallery');
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
   const imgwidth = (gallery.offsetWidth - 3 * 5) / 3 > 200
     ? (gallery.offsetWidth - 3 * 5) / 3
     : 200;
@@ -72,7 +73,9 @@ const renderMatches = (matches) => {
       // append match
       const div = document.createElement('div');
       div.id = match.hash;
-      div.innerHTML += `<img src="${match.image}" loading="lazy" class='cursor-pointer' width="${imgwidth}">`;
+      div.style.width = `${imgwidth}px`;
+      div.classList.add('p-2');
+      div.innerHTML += `<img src="${match.image}" loading="lazy" class='cursor-pointer' width="${imgwidth - 2 * 0.5 * rem}px">`;
       gallery.appendChild(div);
 
       div.querySelector('img').addEventListener('click', (e) => {
@@ -80,14 +83,14 @@ const renderMatches = (matches) => {
         if (selectedMatches.has(match)) {
           selectedMatches.delete(match);
           e.target.classList.remove(...border);
+
+          // add styling to match if it is an error
+          if (match.error !== 'false' && match.error !== false) {
+            div.children[0].classList.add('border-red-500', 'border-4');
+          }
         } else {
           selectedMatches.add(match);
           e.target.classList.add(...border);
-        }
-
-        // add styling to match if it is an error
-        if (match.error !== 'false' && match.error !== false) {
-          div.children[0].classList.add('border-red-500', 'border-4');
         }
 
         updatedEditor();
@@ -245,7 +248,6 @@ import(
     document.getElementById('save').addEventListener('click', () => Promise.all(
       [...selectedMatches].map((game) => {
         const image = { ...game };
-        image.players = [{}];
 
         // setup defaults
         if (!image.players || image.players.length > 2) image.players = [];
@@ -264,7 +266,7 @@ import(
         // apply attributes from editor
         for (const [attribute, doms] of Object.entries(domMaps)) {
           for (const [i, dom] of doms.entries()) {
-            if (dom.value && dom.value !== '') {
+            if (dom.value && dom.value !== '' && dom.value.length > 0) {
               image.players[i][attribute] = (attribute === 'place') ? parseInt(dom.value, 10) : dom.value;
               image.characters[i][attribute] = (attribute === 'place') ? parseInt(dom.value, 10) : dom.value;
             }
