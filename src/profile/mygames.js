@@ -90,6 +90,7 @@ const renderMatches = (matches) => {
           }
         } else {
           selectedMatches.add(match);
+          e.target.classList.remove('border-red-500');
           e.target.classList.add(...border);
         }
 
