@@ -37,7 +37,7 @@ describe('simple tests', () => {
 
   it('image assets should cover all characters', () => {
     const dbcodes = characters.map((c) => c.code);
-    const folders = ['emblem', 'full', 'head', 'portraits', 'thumb_h', 'thumb_v'];
+    const folders = ['emblem', 'full', 'head', 'thumb_h', 'thumb_v'];
     const exts = ['svg', 'png', 'png', 'png', 'png', 'png'];
 
     for (const [i, folder] of folders.entries()) {

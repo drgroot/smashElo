@@ -76,9 +76,11 @@ export const colors = {
   banjokazooie: '#fcdd76',
   terry: '#355c7d',
   incineroar: '#ffd902',
+  minmin: '#ffff66',
 };
 
 export const names = {
+  minmin: 'Min Min',
   mario: 'Mario',
   samus: 'Samus',
   kirby: 'Kirby',
