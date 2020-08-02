@@ -9,10 +9,19 @@
 <body class='bg-gray-300'>
   {{> template/head.html }}
   <div id='content' class='mt-4'>
-    UPLOAD
+    <div id='progress' class='hidden bg-blue-300 p-4 mb-2 rounded-lg'></div>
+    <div id='uploadFiles'
+      class='hover:border-blue-300 hover:text-blue-300 border-blue-500 text-blue-500 text-center cursor-pointer border-dashed border-2 rounded-lg p-2'>
+      <svg xmlns="http://www.w3.org/2000/svg" class='fill-current w-1/4 m-auto' viewBox="0 0 24 24">
+        <path
+          d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
+      </svg>
+      <div>Click to Upload Images</div>
+      <input id='imageupload' type='file' multiple class='hidden' />
+    </div>
   </div>
 
-  <div class=''></div>
+  <div class='bg-green-300'></div>
 </body>
 
 </html>
