@@ -269,8 +269,6 @@ if (character) {
 
       return Promise.all([
         import(
-          /* webpackPreload: true */
-          /* webpackPrefetch: true */
           /* webpackChunkName: "request" */
           './lib/request'
         )
@@ -308,20 +306,14 @@ if (character) {
           }),
         Promise.all([
           import(
-            /* webpackPreload: true */
-            /* webpackPrefetch: true */
             /* webpackChunkName: "dc" */
             'dc'
           ),
           import(
-            /* webpackPreload: true */
-            /* webpackPrefetch: true */
             /* webpackChunkName: "d3" */
             'd3'
           ),
           import(
-            /* webpackPreload: true */
-            /* webpackPrefetch: true */
             /* webpackChunkName: "invertColor" */
             './lib/invertColor'
           ),

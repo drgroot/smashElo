@@ -109,7 +109,6 @@ const renderMatches = (matches) => {
 
 const reset = () => Promise.all([
   import(
-    /* webpackPreload: true */
     /* webpackPrefetch: true */
     /* webpackChunkName: "crossfilter2" */
     'crossfilter2'
@@ -119,7 +118,8 @@ const reset = () => Promise.all([
     /* webpackPrefetch: true */
     /* webpackChunkName: "request" */
     '../lib/request'
-  ),
+  )
+    .then(({ get }) => get('/api/ultimate/profile/games')),
   import(
     /* webpackPreload: true */
     /* webpackPrefetch: true */
@@ -127,8 +127,8 @@ const reset = () => Promise.all([
     '../lib/players'
   ),
 ])
-  .then(([{ default: Crossfilter }, { get }, { names }]) => {
-    const crossfilter = Crossfilter([]);
+  .then(([{ default: Crossfilter }, matches, { names }]) => {
+    const crossfilter = Crossfilter(matches);
 
     // define dimensions
     const errorDim = crossfilter.dimension((d) => d.error !== 'false' && d.error !== false);
@@ -174,53 +174,47 @@ const reset = () => Promise.all([
       updateFilterCounts();
     });
 
-    return get('/api/ultimate/profile/games')
-      .then((matches) => {
-        crossfilter.add(matches);
-        renderMatches(hashDim.top(Infinity));
+    // update filter counts
+    const listParent = node.parentElement.parentElement;
+    inputCount(node, ...errorDim.group().top(Infinity)
+      .filter((e) => e.key === true).map((e) => e.value));
+    for (const character of charactersDim.group().top(Infinity)) {
+      const test = document.getElementById(`${character.key}Filter`);
+      if (!(test instanceof HTMLElement)) {
+        const div = document.createElement('div');
 
-        // update filter counts
-        const listParent = node.parentElement.parentElement;
-        inputCount(node, ...errorDim.group().top(Infinity)
-          .filter((e) => e.key === true).map((e) => e.value));
-        for (const character of charactersDim.group().top(Infinity)) {
-          const test = document.getElementById(`${character.key}Filter`);
-          if (!(test instanceof HTMLElement)) {
-            const div = document.createElement('div');
+        const input = document.createElement('input');
+        input.id = `${character.key}Filter`;
+        input.classList.add('cursor-pointer');
+        input.type = 'checkbox';
+        input.checked = false;
 
-            const input = document.createElement('input');
-            input.id = `${character.key}Filter`;
-            input.classList.add('cursor-pointer');
-            input.type = 'checkbox';
-            input.checked = false;
+        const label = document.createElement('label');
+        label.classList.add('cursor-pointer', 'ml-1');
+        label.setAttribute('for', input.id);
+        label.innerHTML = `${names[character.key]} (<span>${character.value}</span>)`;
 
-            const label = document.createElement('label');
-            label.classList.add('cursor-pointer', 'ml-1');
-            label.setAttribute('for', input.id);
-            label.innerHTML = `${names[character.key]} (<span>${character.value}</span>)`;
+        div.appendChild(input);
+        div.appendChild(label);
+        listParent.appendChild(div);
 
-            div.appendChild(input);
-            div.appendChild(label);
-            listParent.appendChild(div);
-
-            input.addEventListener('change', (e) => {
-              if (e.target.checked) {
-                characters.add(character.key);
-              } else {
-                characters.delete(character.key);
-              }
-
-              updateFilterCounts();
-            });
+        input.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            characters.add(character.key);
+          } else {
+            characters.delete(character.key);
           }
-        }
 
-        // unselect all checkboxes
-        for (const nodeElem of listParent.querySelectorAll('input')) {
-          nodeElem.checked = false;
-        }
-      })
-      .then(() => updateFilterCounts());
+          updateFilterCounts();
+        });
+      }
+    }
+
+    // unselect all checkboxes
+    for (const nodeElem of listParent.querySelectorAll('input')) {
+      nodeElem.checked = false;
+    }
+    updateFilterCounts();
   });
 reset();
 
