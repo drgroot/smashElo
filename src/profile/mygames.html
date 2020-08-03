@@ -9,11 +9,33 @@
 <body class='bg-gray-300'>
   {{> template/head.html }}
   <div id='content' class='mt-4'>
-    <div class='flex w-full flex-row'>
-      <div style='width:250px' class='p-3 flex flex-col flex-shrink-0'>
+    <div class='flex w-full flex-row h-full'>
+      <div style='width:250px' class='p-3 flex flex-col flex-shrink-0 h-full overflow-x-scroll'>
         <div>
           <input class='cursor-pointer' type='checkbox' id='errorFilter'>
           <label class='cursor-pointer' for='errorFilter'>Error (<span></span>)</label>
+        </div>
+        <div id='characterNames' class='mt-2'>
+          <div
+            class='flex items-center cursor-pointer content-center justify-between bg-red-500 p-2 rounded-md text-white-500'>
+            Characters
+            <svg class='fill-current transform' xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+              viewBox="0 0 24 24">
+              <path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z" />
+            </svg>
+          </div>
+          <div class='list'></div>
+        </div>
+        <div id='playerNames' class='mt-2'>
+          <div
+            class='flex items-center cursor-pointer content-center justify-between bg-red-500 p-2 rounded-md text-white-500'>
+            Players
+            <svg class='fill-current transform -rotate-90' xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+              viewBox="0 0 24 24">
+              <path d="M0 7.33l2.829-2.83 9.175 9.339 9.167-9.339 2.829 2.83-11.996 12.17z" />
+            </svg>
+          </div>
+          <div class='list hidden'></div>
         </div>
       </div>
       <div class='flex flex-col justify-start p-3 flex-grow'>
@@ -75,7 +97,18 @@
     </div>
   </div>
 
-  <div class='p-2 ml-1 hidden border-4 border-blue-500 border-red-500 fill-current absolute text-white-500 z-10'></div>
+  <div class='hidden'>
+    <div class='p-2'>a</div>
+    <div class='pl-2'>a</div>
+    <div class='ml-1'>a</div>
+    <div class='border-4'>a</div>
+    <div class='border-blue-500'>a</div>
+    <div class='border-red-500'>a</div>
+    <div class='fill-current'>a</div>
+    <div class='absolute'>a</div>
+    <div class='text-white-500'>a</div>
+    <div class='z-10'>a</div>
+  </div>
 </body>
 
 </html>

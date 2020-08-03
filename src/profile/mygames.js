@@ -4,6 +4,10 @@ import '../template/template';
 const allMatches = [];
 const selectedMatches = new Set();
 
+// set height of page
+const pageContent = document.getElementById('page-content');
+document.getElementById('content').style.height = `${pageContent.offsetHeight - pageContent.children[0].offsetHeight}px`;
+
 const domMaps = {
   playerName: [1, 2].map((i) => document.getElementById(`p${i}name`)),
   character: [1, 2].map((i) => document.getElementById(`p${i}char`)),
@@ -57,7 +61,7 @@ const renderMatches = (matches) => {
 
   // dynamically determine the number of items that can be fit
   const nCols = Math.floor(gallery.offsetWidth / imgwidth);
-  const nRows = Math.floor((document.getElementById('navcontainer').offsetHeight * 0.8 - document.getElementById('pagetitle').offsetHeight) / (imgwidth * 0.5));
+  const nRows = Math.floor((document.getElementById('content').offsetHeight * 0.8) / (imgwidth * 0.5));
   const nItems = nCols * nRows;
 
   const total = new Set([...matches.slice(0, nItems), ...allMatches]);
@@ -107,6 +111,22 @@ const renderMatches = (matches) => {
   updatedEditor();
 };
 
+const hideMenuItems = (e) => {
+  const hidden = e.target.children[0].classList.contains('-rotate-90');
+  const fun = (f) => ((!hidden) ? f.classList.add('hidden') : f.classList.remove('hidden'));
+  if (hidden) {
+    e.target.children[0].classList.remove('-rotate-90');
+  } else {
+    e.target.children[0].classList.add('-rotate-90');
+  }
+
+  for (const input of e.target.parentNode.children) {
+    if (input !== e.target) {
+      fun(input);
+    }
+  }
+};
+
 const reset = () => Promise.all([
   import(
     /* webpackPrefetch: true */
@@ -134,29 +154,56 @@ const reset = () => Promise.all([
     const errorDim = crossfilter.dimension((d) => d.error !== 'false' && d.error !== false);
     const hashDim = crossfilter.dimension((d) => d.hash);
     const charactersDim = crossfilter.dimension((d) => d.characters.map((c) => c.character), true);
+    const playerDim = crossfilter.dimension((d) => d.players.map((p) => p.playerName), true);
     const characterVolDim = crossfilter
       .dimension((d) => d.characters.map((c) => c.character), true);
+    const playerVolDim = crossfilter.dimension((d) => d.players.map((p) => p.playerName), true);
 
     // updates the count of matches in the span tag
-    const inputCount = (nodeElem, amount) => {
+    const inputCount = (nodeElem, amount = 0) => {
       const node = nodeElem;
       node.nextElementSibling.querySelector('span').innerText = amount;
     };
 
     // update function for when a character is selected
     const characters = new Set();
+    const playerNames = new Set();
     const node = document.getElementById('errorFilter');
-    const updateFilterCounts = () => {
-      if (characters.size > 0) {
-        charactersDim.filter((c) => characters.has(c));
-      } else {
-        charactersDim.filterAll();
+    const updateFilterCounts = (changed = null) => {
+      if (changed === characters) {
+        if (characters.size > 0) {
+          charactersDim.filter((c) => characters.has(c));
+        } else {
+          charactersDim.filterAll();
+        }
       }
 
+      if (changed === playerNames) {
+        if (playerNames.size > 0) {
+          playerDim.filter((p) => playerNames.has(p));
+        } else {
+          playerDim.filterAll();
+        }
+      }
+
+      // update filter counts on error
       inputCount(node, ...errorDim.group().top(Infinity)
         .filter((e) => e.key === true).map((e) => e.value));
+
+      // update filter counts on characters
       for (const { key: character, value } of characterVolDim.group().top(Infinity)) {
         const inputNode = document.getElementById(`${character}Filter`);
+        if (value > 0) {
+          inputNode.parentElement.classList.remove('hidden');
+          inputCount(inputNode, value);
+        } else if (value === 0 && (!inputNode.parentElement.classList.contains('hidden'))) {
+          inputNode.parentElement.classList.add('hidden');
+        }
+      }
+
+      // update filter counts on players
+      for (const { key: player, value } of playerVolDim.group().top(Infinity)) {
+        const inputNode = document.getElementById(`p${player}Filter`);
         if (value > 0) {
           inputNode.parentElement.classList.remove('hidden');
           inputCount(inputNode, value);
@@ -169,19 +216,23 @@ const reset = () => Promise.all([
     };
 
     // update function for when error is targeted
+    node.parentElement.parentElement.style.height = `${document.getElementById('content').offsetHeight * 0.95}px`;
     node.addEventListener('change', (e) => {
       errorDim.filter(e.target.checked ? true : null);
       updateFilterCounts();
     });
+    node.checked = false;
 
     // update filter counts
-    const listParent = node.parentElement.parentElement;
-    inputCount(node, ...errorDim.group().top(Infinity)
-      .filter((e) => e.key === true).map((e) => e.value));
+    const characterList = document.getElementById('characterNames');
+    const dropCharacter = characterList.children[0];
+    dropCharacter.classList.remove('-rotate-90');
+    dropCharacter.addEventListener('click', hideMenuItems);
     for (const character of charactersDim.group().top(Infinity)) {
       const test = document.getElementById(`${character.key}Filter`);
       if (!(test instanceof HTMLElement)) {
         const div = document.createElement('div');
+        div.classList.add('pl-2');
 
         const input = document.createElement('input');
         input.id = `${character.key}Filter`;
@@ -196,7 +247,7 @@ const reset = () => Promise.all([
 
         div.appendChild(input);
         div.appendChild(label);
-        listParent.appendChild(div);
+        characterList.children[1].appendChild(div);
 
         input.addEventListener('change', (e) => {
           if (e.target.checked) {
@@ -205,15 +256,53 @@ const reset = () => Promise.all([
             characters.delete(character.key);
           }
 
-          updateFilterCounts();
+          updateFilterCounts(characters);
         });
+      } else {
+        test.querySelector('input').checked = false;
       }
     }
 
-    // unselect all checkboxes
-    for (const nodeElem of listParent.querySelectorAll('input')) {
-      nodeElem.checked = false;
+    const playerList = document.getElementById('playerNames');
+    const dropPlayer = playerList.children[0];
+    dropPlayer.classList.remove('-rotate-90');
+    dropPlayer.addEventListener('click', hideMenuItems);
+    for (const { key: player, value } of playerDim.group().top(Infinity)) {
+      const id = `p${player}Filter`;
+      const test = document.getElementById(id);
+      if (!(test instanceof HTMLElement)) {
+        const div = document.createElement('div');
+        div.classList.add('pl-2');
+
+        const input = document.createElement('input');
+        input.id = id;
+        input.classList.add('cursor-pointer');
+        input.type = 'checkbox';
+        input.checked = false;
+
+        const label = document.createElement('label');
+        label.classList.add('cursor-pointer', 'ml-1');
+        label.setAttribute('for', input.id);
+        label.innerHTML = `${player} (<span>${value}</span>)`;
+
+        div.appendChild(input);
+        div.appendChild(label);
+        playerList.children[1].appendChild(div);
+
+        input.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            playerNames.add(player);
+          } else {
+            playerNames.delete(player);
+          }
+
+          updateFilterCounts(playerNames);
+        });
+      } else {
+        test.querySelector('input').checked = false;
+      }
     }
+
     updateFilterCounts();
   });
 reset();
@@ -225,12 +314,14 @@ import(
   '../lib/players'
 )
   .then(({ names }) => domMaps.character
-    .forEach((node) => Object.entries(names).forEach(([value, text]) => {
-      const option = document.createElement('option');
-      option.value = value;
-      option.innerText = text;
-      node.appendChild(option);
-    })));
+    .forEach((node) => Object.entries(names)
+      .sort()
+      .forEach(([value, text]) => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.innerText = text;
+        node.appendChild(option);
+      })));
 
 // handle deletion and saving of games
 import(

@@ -17,14 +17,15 @@ if (navopen.offsetParent !== null) {
   navcontainer.classList.remove('hidden');
 }
 
-// move content node
-const content = document.getElementById('content');
-if (content instanceof HTMLElement) {
-  document.getElementById('page-content').appendChild(content);
-}
-
 // set title of page to page title
 document.getElementById('pagetitle').innerText = document.title;
+
+// move content node and set height
+const pageContent = document.getElementById('page-content');
+const content = document.getElementById('content');
+if (content instanceof HTMLElement) {
+  pageContent.appendChild(content);
+}
 
 // set the active page class
 const pages = navcontainer.querySelectorAll('a');
