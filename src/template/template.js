@@ -1,3 +1,5 @@
+const { post } = require('../lib/request');
+
 // handles opening and closing of the navigation menu
 const navopen = document.getElementById('navopenbutton');
 const navcontainer = document.getElementById('navcontainer');
@@ -52,13 +54,17 @@ document.getElementById('loginbutton').addEventListener('click', () => {
   }
 });
 
+document.getElementById('enablenamespacing').addEventListener('click', () => post('/api/session/setNamespace')
+  .then(() => window.location.reload()));
+
 import(
   /* webpackPreload: true */
   /* webpackPrefetch: true */
   /* webpackChunkName: "request" */
   '../lib/request'
-).then(({ get }) => get('/api/')
-  .then(() => {
+).then(({ get }) => get('/api/session')
+  .then(({ namespace = false }) => {
+    document.getElementById('enablenamespacing').checked = namespace;
     Array.from(navcontainer.querySelectorAll('.login'))
       .forEach((node) => node.classList.remove('hidden'));
     Array.from(navcontainer.querySelectorAll('.nologin'))
