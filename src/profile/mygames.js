@@ -50,9 +50,98 @@ const updatedEditor = () => {
   return editor.classList.remove('hidden');
 };
 
+// creates pagination browser
+const binds = [];
+let tmpMatches = null;
+const generatePaginator = (matches, nItems, activePage) => {
+  const pages = Math.ceil(matches.length / nItems);
+  const paginator = document.getElementById('paginator');
+
+  const visiblePages = new Set();
+  for (let i = 0; i < 5; i += 1) {
+    // check left side
+    if (activePage - i > 0) {
+      visiblePages.add(activePage - i);
+    }
+
+    // check right side
+    if (activePage + i < pages) {
+      visiblePages.add(activePage + i);
+    }
+  }
+
+  const activePages = Array.from(paginator.children);
+  if (tmpMatches !== matches) {
+    tmpMatches = matches;
+
+    // render view
+    const outer = activePages.length > pages ? activePages.length : pages;
+    for (let i = 0; i < outer; i += 1) {
+      // check if node exists and modify it
+      if (activePages[i] instanceof HTMLElement) {
+        // remove event listener
+        activePages[i].removeEventListener('click', binds[i]);
+        binds[i] = null;
+
+        // if the page is greater than number of pages, remove it
+        if (i > pages) {
+          paginator.removeChild(activePages[i]);
+        }
+      }
+
+      if (i < pages) {
+        // create node if not there
+        if (i >= activePages.length || (!(activePages[i] instanceof HTMLElement))) {
+          const node = document.createElement('div');
+          node.innerText = i + 1;
+          node.classList.add('ml-1', 'cursor-pointer');
+          paginator.appendChild(node);
+          activePages[i] = node;
+        }
+
+        // eslint-disable-next-line no-use-before-define
+        binds[i] = () => renderMatches(matches, i);
+        activePages[i].addEventListener('click', binds[i]);
+
+        // control selection
+        if (i === activePage) {
+          activePages[i].classList.remove('text-blue-500');
+          activePages[i].classList.add('text-red-500');
+        } else {
+          activePages[i].classList.remove('text-red-500');
+          activePages[i].classList.add('text-blue-500', 'hover:text-red-400');
+        }
+
+        // control visibility
+        if (visiblePages.has(i)) {
+          activePages[i].classList.remove('hidden');
+        } else {
+          activePages[i].classList.add('hidden');
+        }
+      }
+    }
+  } else {
+    for (const [i, node] of activePages.entries()) {
+      if (visiblePages.has(i)) {
+        node.classList.remove('hidden');
+      } else {
+        node.classList.add('hidden');
+      }
+
+      if (node.classList.contains('text-red-500') && i !== activePage) {
+        node.classList.remove('text-red-500');
+        node.classList.add('text-blue-500');
+      } else if (i === activePage) {
+        node.classList.remove('text-blue-500');
+        node.classList.add('text-red-500');
+      }
+    }
+  }
+};
+
 // populates the gallery with matches. this is done when a new filter is applied
 // or a match has been updated/edited.
-const renderMatches = (matches) => {
+const renderMatches = (matches, page = 0) => {
   const gallery = document.getElementById('gallery');
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
   const imgwidth = (gallery.offsetWidth - 3 * 5) / 3 > 200
@@ -64,9 +153,10 @@ const renderMatches = (matches) => {
   const nRows = Math.floor((document.getElementById('content').offsetHeight * 0.8) / (imgwidth * 0.5));
   const nItems = nCols * nRows;
 
-  const total = new Set([...matches.slice(0, nItems), ...allMatches]);
+  const pageMatches = matches.slice(page * nItems, (page + 1) * nItems);
+  const total = new Set([...pageMatches, ...allMatches]);
   for (const match of total) {
-    if (!matches.includes(match)) {
+    if (!pageMatches.includes(match)) {
       // delete node
       allMatches.splice(allMatches.indexOf(match), 1);
       selectedMatches.delete(match);
@@ -109,6 +199,7 @@ const renderMatches = (matches) => {
   }
 
   updatedEditor();
+  generatePaginator(matches, nItems, page);
 };
 
 const hideMenuItems = (e) => {
