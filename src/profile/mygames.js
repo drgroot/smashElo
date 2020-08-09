@@ -127,7 +127,7 @@ const hideMenuItems = (e) => {
   }
 };
 
-const reset = () => Promise.all([
+Promise.all([
   import(
     /* webpackPrefetch: true */
     /* webpackChunkName: "crossfilter2" */
@@ -305,7 +305,6 @@ const reset = () => Promise.all([
 
     updateFilterCounts();
   });
-reset();
 
 import(
   /* webpackPreload: true */
@@ -362,10 +361,10 @@ import(
         return post('/api/ultimate/profile/saveGame', { image });
       }),
     )
-      .then(() => reset()));
+      .then(() => window.location.reload()));
 
     document.getElementById('delete').addEventListener('click', () => Promise.all(
       [...selectedMatches]
         .map((image) => post('/api/ultimate/profile/delete', { image })),
-    ).then(() => reset()));
+    ).then(() => window.location.reload()));
   });
